@@ -1,0 +1,26 @@
+services:
+  # Application service
+  farm:
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+#    networks:
+#      - security_net
+    restart: "always"
+    ports:
+      -  "${FARM_PORT}:8000"
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: farm
+      POSTGRES_PASSWORD: asdasdasd
+      POSTGRES_DB: farmdb
+    healthcheck:
+      test: pg_isready -U farm -d farmdb
+      interval: 10s
+      timeout: 3s
+      retries: 3
