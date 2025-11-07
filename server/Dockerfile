@@ -6,4 +6,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-CMD ["./start_server.sh"]
+ENTRYPOINT ["/app/start_server.sh"]
