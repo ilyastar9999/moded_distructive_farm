@@ -30,4 +30,4 @@ jobs:
         with:
           context: server/
           push: true
-          tags: ghcr.io/${{ github.repository }}/my-image:latest
+          tags: ghcr.io/${{ github.repository }}:latest
