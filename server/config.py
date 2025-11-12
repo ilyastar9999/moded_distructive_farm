@@ -1,3 +1,4 @@
+import os
 CONFIG = {
     # Don't forget to remove the old database (flags.sqlite) before each competition.
 
@@ -5,20 +6,20 @@ CONFIG = {
 
     # The clients will run sploits on TEAMS and
     # fetch FLAG_FORMAT from sploits' stdout.
-    'TEAMS': {'Team #{}'.format(i): '10.0.0.{}'.format(i)
-              for i in range(1, 29 + 1)},
+    'TEAMS': {'Team #{}'.format(i): os.getenv('IP_TEAM_BASE').format(i)
+              for i in range(1, int(os.getenv('NUM_TEAMS')) + 1)},
     'FLAG_FORMAT': r'[A-Z0-9]{31}=',
 
     # This configures how and where to submit flags.
     # The protocol must be a module in protocols/ directory.
 
-    'SYSTEM_PROTOCOL': 'default',
-    'SYSTEM_HOST': '127.0.0.1',
-    'SYSTEM_PORT': 31337,
+    # 'SYSTEM_PROTOCOL': 'default',
+    # 'SYSTEM_HOST': '127.0.0.1',
+    # 'SYSTEM_PORT': 31337,
 
-    # 'SYSTEM_PROTOCOL': 'ructf_http',
-    # 'SYSTEM_URL': 'http://monitor.ructfe.org/flags',
-    # 'SYSTEM_TOKEN': 'your_secret_token',
+    'SYSTEM_PROTOCOL': 'ructf_http',
+    'SYSTEM_URL': os.getenv('BOARD_URL'),
+    'SYSTEM_TOKEN': os.getenv('TEAM_TOKEN'),
 
     # 'SYSTEM_PROTOCOL': 'volgactf',
     # 'SYSTEM_HOST': '127.0.0.1',
@@ -37,7 +38,7 @@ CONFIG = {
 
     # Password for the web interface. You can use it with any login.
     # This value will be excluded from the config before sending it to farm clients.
-    'SERVER_PASSWORD': 'pepez_slit',
+    'SERVER_PASSWORD': os.getenv('WEB_PASSWORD'),
 
     # Use authorization for API requests
     'ENABLE_API_AUTH': False,

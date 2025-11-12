@@ -4,11 +4,20 @@ services:
     build:
       context: ./server/
       dockerfile: Dockerfile
+    environment:
+      - DB_PORT=5432
+      - DB_HOST=postgres
+      - DB_USER=farm
+      - DB_PASS=asdasdasd
+      - DB_NAME=farmdb
+      - BOARD_URL=${BOARD_URL}
+      - TEAM_TOKEN=${TEAM_TOKEN}
+      - WEB_PASSWORD=${WEB_PASSWORD}
+      - NUM_TEAMS=${NUM_TEAMS}
+      - IP_TEAM_BASE=${IP_TEAM_BASE}
     depends_on:
       postgres:
         condition: service_healthy
-#    networks:
-#      - security_net
     restart: "always"
     ports:
       -  "3333:8000"
