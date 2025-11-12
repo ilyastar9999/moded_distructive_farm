@@ -70,7 +70,7 @@ def run_loop():
         db.commit()
 
         cursor.execute("SELECT * FROM flags WHERE status = %s", (FlagStatus.QUEUED.name,))
-        queued_flags = [Flag(**item) for item in cursor.fetchall()]
+        queued_flags = [Flag(*item) for item in cursor.fetchall()]
 
         if queued_flags:
             grouped_flags = defaultdict(list)
