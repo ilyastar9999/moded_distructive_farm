@@ -28,7 +28,8 @@ def post_flags():
     db = database.get()
     cursor = db.cursor()
     cursor.executemany("INSERT INTO flags (flag, sploit, team, time, status) "
-                   "VALUES (%s, %s, %s, %s, %s)", rows)
+                   "VALUES (%s, %s, %s, %s, %s) "
+                   "ON CONFLICT (flag) DO NOTHING", rows)
     db.commit()
 
     return ''
