@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, Response
+from flask import request, Response, redirect
 
 import reloader
 
@@ -17,7 +17,7 @@ def auth_required(f):
         auth = request.cookies.get('password')
         config = reloader.get_config()
         if auth is None or auth != config['SERVER_PASSWORD']:
-            return authenticate()
+            return redirect('/')
         return f(*args, **kwargs)
     return decorated
 
