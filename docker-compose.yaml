@@ -4,6 +4,7 @@ services:
     build:
       context: ./server/
       dockerfile: Dockerfile
+    image: ghcr.io/ilyastar9999/moded_distructive_farm:latest
     environment:
       - DB_PORT=5432
       - DB_HOST=postgres
