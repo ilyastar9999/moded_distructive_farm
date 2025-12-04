@@ -28,7 +28,20 @@ def submit_flags(flags, config):
                      json=[item.flag for item in flags], timeout=TIMEOUT)
 
     unknown_responses = set()
-    for item in r.json():
+    
+    # Check if response is empty or not JSON
+    try:
+        response_data = r.json()
+    except requests.exceptions.JSONDecodeError:
+        app.logger.error('Failed to parse JSON response. Status: %s, Body: %s', r.status_code, r.text)
+        # Mark all flags as queued to retry later
+        for item in flags:
+            yield SubmitResult(item.flag, FlagStatus.QUEUED, 'Invalid JSON response from server')
+        return
+    
+    # Parse response JSON
+    # Example: [{"flag":"TQB59ZCK4KOHPD8GRPPF9VPYBZ3C28M=","msg":"[TQB59ZCK4KOHPD8GRPPF9VPYBZ3C28M=] Flag is too old"}]
+    for item in response_data:
         response = item['msg'].strip()
         response = response.replace('[{}] '.format(item['flag']), '')
 
@@ -44,3 +57,4 @@ def submit_flags(flags, config):
                 app.logger.warning('Unknown checksystem response (flag will be resent): %s', response)
 
         yield SubmitResult(item['flag'], found_status, response)
+

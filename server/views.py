@@ -2,7 +2,7 @@ import re
 import time
 from datetime import datetime
 
-from flask import jsonify, render_template, request, redirect
+from flask import jsonify, render_template, request, redirect, send_from_directory
 
 from __init__ import app
 import auth
@@ -10,6 +10,10 @@ import database
 import reloader
 from models import FlagStatus
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    static_dir = os.path.join(os.path.dirname(__file__), 'static')
+    return send_from_directory(static_dir, filename)
 
 @app.template_filter('timestamp_to_datetime')
 def timestamp_to_datetime(s):

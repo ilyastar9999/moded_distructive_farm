@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     restart: "always"
     ports:
-      -  "3333:8000"
+      - "3333:8000"
 
   postgres:
     image: postgres:18
