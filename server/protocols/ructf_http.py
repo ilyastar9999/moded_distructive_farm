@@ -39,11 +39,29 @@ def submit_flags(flags, config):
             yield SubmitResult(item.flag, FlagStatus.QUEUED, 'Invalid JSON response from server')
         return
     
-    # Parse response JSON
-    # Example: [{"flag":"TQB59ZCK4KOHPD8GRPPF9VPYBZ3C28M=","msg":"[TQB59ZCK4KOHPD8GRPPF9VPYBZ3C28M=] Flag is too old"}]
-    for item in response_data:
-        response = item['msg'].strip()
-        response = response.replace('[{}] '.format(item['flag']), '')
+    # Parse response JSON.
+    # Some checksystems return a list of dicts, while others return a list of strings.
+    # Example(dict): [{"flag":"...","msg":"[...] Flag is too old"}]
+    # Example(str): ["[...] Flag is too old", "..."]
+    if not isinstance(response_data, list):
+        app.logger.error('Unexpected response format. Status: %s, Body: %s', r.status_code, r.text)
+        for item in flags:
+            yield SubmitResult(item.flag, FlagStatus.QUEUED, 'Unexpected response format from server')
+        return
+
+    for index, item in enumerate(response_data):
+        if index >= len(flags):
+            break
+
+        current_flag = flags[index].flag
+        if isinstance(item, dict):
+            response = str(item.get('msg', '')).strip()
+            response_flag = str(item.get('flag', current_flag))
+        else:
+            response = str(item).strip()
+            response_flag = current_flag
+
+        response = response.replace('[{}] '.format(response_flag), '')
 
         response_lower = response.lower()
         for status, substrings in RESPONSES.items():
@@ -56,5 +74,4 @@ def submit_flags(flags, config):
                 unknown_responses.add(response)
                 app.logger.warning('Unknown checksystem response (flag will be resent): %s', response)
 
-        yield SubmitResult(item['flag'], found_status, response)
-
+        yield SubmitResult(response_flag, found_status, response)
